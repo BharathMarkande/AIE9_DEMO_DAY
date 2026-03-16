@@ -1,0 +1,4 @@
+max_risk_per_trade: 2000
+min_risk_to_reward_ratio: 1.5
+max_trades_per_day: 3
+max_daily_loss: 5000
