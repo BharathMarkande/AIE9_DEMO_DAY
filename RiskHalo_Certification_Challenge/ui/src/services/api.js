@@ -8,12 +8,24 @@ const API_BASE = import.meta.env.VITE_API_BASE || "http://localhost:8000";
  * Upload weekly trade file and risk per trade to the backend.
  * @param {File} file - .xlsx weekly trade file
  * @param {number} riskPerTrade - risk per trade value
+ * @param {number} minRiskToRewardRatio - minimum risk:reward ratio for winning trades
+ * @param {number} maxTradesPerDay - maximum trades allowed per day
+ * @param {number} maxDailyLoss - maximum allowed daily loss
  * @returns {Promise<{ success: boolean, message?: string, error?: string }>}
  */
-export async function uploadSession(file, riskPerTrade) {
+export async function uploadSession(
+  file,
+  riskPerTrade,
+  minRiskToRewardRatio,
+  maxTradesPerDay,
+  maxDailyLoss
+) {
   const formData = new FormData();
   formData.append("file", file);
   formData.append("risk_per_trade", String(riskPerTrade));
+  formData.append("min_risk_to_reward_ratio", String(minRiskToRewardRatio));
+  formData.append("max_trades_per_day", String(maxTradesPerDay));
+  formData.append("max_daily_loss", String(maxDailyLoss));
 
   const response = await fetch(`${API_BASE}/upload`, {
     method: "POST",

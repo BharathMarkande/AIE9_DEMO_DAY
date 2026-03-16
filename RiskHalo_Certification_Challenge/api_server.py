@@ -49,12 +49,24 @@ def get_vector_store():
 async def upload(
     file: UploadFile = File(...),
     risk_per_trade: float = Form(...),
+    min_risk_to_reward_ratio: float = Form(...),
+    max_trades_per_day: int = Form(...),
+    max_daily_loss: float = Form(...),
 ):
     if not file.filename or not file.filename.lower().endswith((".xlsx", ".xls")):
         raise HTTPException(400, "Please upload an Excel file (.xlsx or .xls)")
 
     if risk_per_trade <= 0:
         raise HTTPException(400, "risk_per_trade must be positive")
+
+    if min_risk_to_reward_ratio <= 0:
+        raise HTTPException(400, "min_risk_to_reward_ratio must be positive")
+
+    if max_trades_per_day <= 0:
+        raise HTTPException(400, "max_trades_per_day must be positive")
+
+    if max_daily_loss <= 0:
+        raise HTTPException(400, "max_daily_loss must be positive")
 
     try:
         suffix = os.path.splitext(file.filename)[1] or ".xlsx"
@@ -64,7 +76,18 @@ async def upload(
                 f.write(await file.read())
             embedder = get_embedder()
             vector_store = get_vector_store()
-            analysis = process_single_file(path, embedder, vector_store, declared_risk=risk_per_trade)
+            rules_overrides = {
+                "min_risk_to_reward_ratio": min_risk_to_reward_ratio,
+                "max_trades_per_day": max_trades_per_day,
+                "max_daily_loss": max_daily_loss,
+            }
+            analysis = process_single_file(
+                path,
+                embedder,
+                vector_store,
+                declared_risk=risk_per_trade,
+                rules_overrides=rules_overrides,
+            )
             return {
                 "success": True,
                 "message": "Session analyzed successfully.",

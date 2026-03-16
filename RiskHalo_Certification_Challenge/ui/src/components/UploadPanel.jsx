@@ -2,6 +2,9 @@ import React, { useState, useEffect, useRef } from 'react'
 import { uploadSession } from '../services/api'
 
 const RISK_STORAGE_KEY = 'riskhalo_risk_per_trade'
+const MIN_RR_STORAGE_KEY = 'riskhalo_min_rr'
+const MAX_TRADES_STORAGE_KEY = 'riskhalo_max_trades_per_day'
+const MAX_DAILY_LOSS_STORAGE_KEY = 'riskhalo_max_daily_loss'
 
 export default function UploadPanel({ onUploadSuccess, onUploadError }) {
   const [file, setFile] = useState(null)
@@ -11,6 +14,30 @@ export default function UploadPanel({ onUploadSuccess, onUploadError }) {
       return saved !== null ? Number(saved) : 2000
     } catch {
       return 2000
+    }
+  })
+  const [minRR, setMinRR] = useState(() => {
+    try {
+      const saved = localStorage.getItem(MIN_RR_STORAGE_KEY)
+      return saved !== null ? Number(saved) : 1.5
+    } catch {
+      return 1.5
+    }
+  })
+  const [maxTradesPerDay, setMaxTradesPerDay] = useState(() => {
+    try {
+      const saved = localStorage.getItem(MAX_TRADES_STORAGE_KEY)
+      return saved !== null ? Number(saved) : 3
+    } catch {
+      return 3
+    }
+  })
+  const [maxDailyLoss, setMaxDailyLoss] = useState(() => {
+    try {
+      const saved = localStorage.getItem(MAX_DAILY_LOSS_STORAGE_KEY)
+      return saved !== null ? Number(saved) : 5000
+    } catch {
+      return 5000
     }
   })
   const [loading, setLoading] = useState(false)
@@ -24,6 +51,24 @@ export default function UploadPanel({ onUploadSuccess, onUploadError }) {
       localStorage.setItem(RISK_STORAGE_KEY, String(riskPerTrade))
     } catch (_) {}
   }, [riskPerTrade])
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(MIN_RR_STORAGE_KEY, String(minRR))
+    } catch (_) {}
+  }, [minRR])
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(MAX_TRADES_STORAGE_KEY, String(maxTradesPerDay))
+    } catch (_) {}
+  }, [maxTradesPerDay])
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(MAX_DAILY_LOSS_STORAGE_KEY, String(maxDailyLoss))
+    } catch (_) {}
+  }, [maxDailyLoss])
 
   const handleFileChange = (e) => {
     const f = e.target.files?.[0]
@@ -66,11 +111,32 @@ export default function UploadPanel({ onUploadSuccess, onUploadError }) {
       setIsError(true)
       return
     }
+    if (minRR <= 0 || isNaN(minRR)) {
+      setMessage('Please enter a valid minimum R:R')
+      setIsError(true)
+      return
+    }
+    if (maxTradesPerDay <= 0 || isNaN(maxTradesPerDay)) {
+      setMessage('Please enter a valid max trades per day')
+      setIsError(true)
+      return
+    }
+    if (maxDailyLoss <= 0 || isNaN(maxDailyLoss)) {
+      setMessage('Please enter a valid max daily loss')
+      setIsError(true)
+      return
+    }
     setLoading(true)
     setMessage(null)
     setIsError(false)
     try {
-      const result = await uploadSession(file, riskPerTrade)
+      const result = await uploadSession(
+        file,
+        riskPerTrade,
+        minRR,
+        maxTradesPerDay,
+        maxDailyLoss
+      )
       setMessage(result.message || 'Session analyzed successfully.')
       setIsError(false)
       setFile(null)
@@ -112,12 +178,46 @@ export default function UploadPanel({ onUploadSuccess, onUploadError }) {
           </span>
         </div>
         <div className="form-row">
-          <label className="label">Risk per Trade</label>
+          <label className="label">Risk per Trade (₹)</label>
           <input
             type="number"
             min={1}
             value={riskPerTrade}
             onChange={(e) => setRiskPerTrade(Number(e.target.value) || 0)}
+            className="input-number"
+            disabled={loading}
+          />
+        </div>
+        <div className="form-row">
+          <label className="label">Minimum Risk:Reward (R:R)</label>
+          <input
+            type="number"
+            min={0.1}
+            step={0.1}
+            value={minRR}
+            onChange={(e) => setMinRR(Number(e.target.value) || 0)}
+            className="input-number"
+            disabled={loading}
+          />
+        </div>
+        <div className="form-row">
+          <label className="label">Max Trades per Day</label>
+          <input
+            type="number"
+            min={1}
+            value={maxTradesPerDay}
+            onChange={(e) => setMaxTradesPerDay(Number(e.target.value) || 0)}
+            className="input-number"
+            disabled={loading}
+          />
+        </div>
+        <div className="form-row">
+          <label className="label">Max Daily Loss (₹)</label>
+          <input
+            type="number"
+            min={1}
+            value={maxDailyLoss}
+            onChange={(e) => setMaxDailyLoss(Number(e.target.value) || 0)}
             className="input-number"
             disabled={loading}
           />

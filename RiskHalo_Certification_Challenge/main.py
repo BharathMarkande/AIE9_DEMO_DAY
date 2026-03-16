@@ -19,7 +19,7 @@ DECLARED_RISK = 2000
 DATA_FOLDER = "data/Weekly_Trade_Data_Uploads"
 
 
-def process_single_file(file_path, embedder, vector_store, declared_risk=None):
+def process_single_file(file_path, embedder, vector_store, declared_risk=None, rules_overrides=None):
     """
     Runs full RiskHalo pipeline for a single weekly file
     and stores its summary in ChromaDB.
@@ -50,6 +50,13 @@ def process_single_file(file_path, embedder, vector_store, declared_risk=None):
     # Rule Compliance Layer
     # ==========================================================
     rules_config = load_rules_config()
+
+    if declared_risk is not None:
+        rules_config["max_risk_per_trade"] = declared_risk
+
+    if rules_overrides:
+        rules_config.update(rules_overrides)
+
     rule_engine = RuleComplianceEngine(feature_df, rules_config)
     rule_results = rule_engine.run()
 
