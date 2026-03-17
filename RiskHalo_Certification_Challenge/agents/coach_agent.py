@@ -57,7 +57,7 @@ def retrieve_sessions(state: CoachState):
 
     documents = results.get("documents", [[]])[0]
 
-    print(f"Retrieved documents: {documents}")
+    #print(f"Retrieved documents: {documents}")
     return {"retrieved_docs": documents}
 
 

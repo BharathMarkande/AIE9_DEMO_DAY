@@ -39,8 +39,7 @@ export default function App() {
             <section className="glass-card session-summary-card session-summary-card--empty">
               <h2 className="panel-title session-summary-title">Trading Session Analysis</h2>
               <p className="session-summary-empty-copy">
-                Upload a weekly trade journal on the left to see your behavioral risk profile,
-                expectancy damage, and AI-generated insights here.
+                Upload a weekly trade journal on the left to see your behavioral risk profile.
               </p>
             </section>
           )}

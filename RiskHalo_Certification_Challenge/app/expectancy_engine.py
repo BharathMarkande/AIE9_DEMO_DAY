@@ -137,9 +137,9 @@ def format_expectancy_summary(
     if behavioral_state == "INSUFFICIENT_POST_LOSS_DATA":
         return (
             "Performance Impact\n"
-            "There were insufficient post-loss trades to evaluate behavioral expectancy shift.\n"
-            "Expectancy comparison requires comparable trade groups.\n"
-            "No economic impact is inferred for this period."
+            "There were too few trades taken immediately after a loss to compare your behavior reliably.\n"
+            "To measure how you behave after losses, the model needs enough post-loss trades to form a group.\n"
+            "For this period, no economic impact from post-loss behavior is estimated."
         )
 
     # --------------------------------------------------
@@ -149,15 +149,16 @@ def format_expectancy_summary(
         if risk_per_trade:
             return (
                 "Performance Impact\n"
-                f"Your average trade outcome remained consistent at approximately ₹{normal_rupees} per trade.\n"
-                "There is no meaningful performance deterioration after losses.\n"
-                "Financial impact from behavioral distortion appears minimal."
+                f"On average, your trades were fairly consistent at around ₹{normal_rupees} per trade.\n"
+                "Your behavior after losses did not meaningfully change your results versus normal conditions.\n"
+                "For this period, there is no clear evidence that post-loss trading is hurting your performance."
             )
         else:
             return (
                 "Performance Impact\n"
-                f"Your average trade outcome remained consistent at {normal_R}R per trade.\n"
-                "There is no meaningful performance deterioration after losses."
+                f"On average, your trades were fairly consistent at about {normal_R}R per trade.\n"
+                "Your behavior after losses did not meaningfully change your results versus normal conditions.\n"
+                "For this period, there is no clear evidence that post-loss trading is hurting your performance."
             )
 
     # --------------------------------------------------
@@ -167,18 +168,16 @@ def format_expectancy_summary(
         if risk_per_trade:
             return (
                 "Performance Impact\n"
-                f"In stable conditions, your trades averaged ₹{normal_rupees} per trade.\n"
-                f"After a loss, performance declined to an average loss of ₹{abs(post_rupees)} per trade.\n"
-                f"This deterioration reflects post-loss loss escalation behavior.\n"
-                f"Across the analyzed period, this behavioral shift reduced performance by approximately ₹{abs(impact_rupees)}."
+                f"On trades taken right after a loss, you lost about ₹{abs(post_rupees)} per trade on average.\n"
+                f"Over this period, continuing to trade after losses cost you about ₹{abs(impact_rupees)} in additional losses compared with stopping after a loss.\n"
+                "This pattern is typical of revenge trading after losses, where you keep trading in a degraded state and give back more than your planned risk."
             )
         else:
             return (
                 "Performance Impact\n"
                 f"Normal trades averaged {normal_R}R per trade.\n"
                 f"After losses, trades averaged {post_R}R per trade.\n"
-                f"This deterioration reflects post-loss loss escalation behavior.\n"
-                f"Estimated impact over period: ₹{abs(impact_rupees)}."
+                f"Over this period, that deterioration reduced performance by about ₹{abs(impact_rupees)} compared with stopping after a loss."
             )
 
     # --------------------------------------------------
@@ -188,17 +187,18 @@ def format_expectancy_summary(
         if risk_per_trade:
             return (
                 "Performance Impact\n"
-                f"Baseline performance averaged ₹{normal_rupees} per trade.\n"
-                f"After losses, profitability declined to ₹{post_rupees} per trade.\n"
-                "This suggests profit compression rather than risk expansion.\n"
-                f"The resulting expectancy shift impacted performance by approximately ₹{abs(impact_rupees)}."
+                f"In normal conditions, your trades averaged about ₹{normal_rupees} per trade.\n"
+                f"After losses, your average result slipped to about ₹{post_rupees} per trade, mainly because you took profits earlier and let winners run less.\n"
+                "This points to profit compression after drawdowns — you become more cautious and cut winners sooner, rather than taking larger losses.\n"
+                f"Over this period, that behavior change reduced your results by roughly ₹{abs(impact_rupees)} compared with keeping the same profit targets after losses."
             )
         else:
             return (
                 "Performance Impact\n"
-                f"Baseline performance averaged {normal_R}R per trade.\n"
-                f"After losses, performance shifted to {post_R}R per trade.\n"
-                "This suggests profit compression following losses."
+                f"In normal conditions, your trades averaged about {normal_R}R per trade.\n"
+                f"After losses, this dropped to about {post_R}R per trade, mostly due to smaller wins rather than bigger losses.\n"
+                "This points to profit compression after drawdowns — more cautious exits and earlier profit-taking.\n"
+                f"Over this period, that behavior change reduced your results by roughly ₹{abs(impact_rupees)} compared with keeping the same profit targets after losses."
             )
 
     # --------------------------------------------------
@@ -208,24 +208,25 @@ def format_expectancy_summary(
         if risk_per_trade:
             return (
                 "Performance Impact\n"
-                f"In stable conditions, trades averaged ₹{normal_rupees} per trade.\n"
-                f"After losses, performance improved to approximately ₹{post_rupees} per trade.\n"
-                "This indicates constructive behavioral adjustment rather than emotional distortion.\n"
-                f"The positive shift contributed approximately ₹{abs(impact_rupees)} over the period."
+                f"In normal conditions, your trades averaged about ₹{normal_rupees} per trade.\n"
+                f"After losses, your average result actually improved to around ₹{post_rupees} per trade.\n"
+                "This suggests you respond to losses constructively — you tighten up and execute better instead of chasing or freezing.\n"
+                f"Over this period, that adaptive response added roughly ₹{abs(impact_rupees)} to your results compared with stopping at the normal level."
             )
         else:
             return (
                 "Performance Impact\n"
-                f"Normal trades averaged {normal_R}R per trade.\n"
-                f"After losses, trades improved to {post_R}R per trade.\n"
-                "This indicates adaptive recovery behavior."
+                f"In normal conditions, your trades averaged about {normal_R}R per trade.\n"
+                f"After losses, this improved to about {post_R}R per trade.\n"
+                "This suggests an adaptive recovery pattern — your execution quality improves following setbacks.\n"
+                f"Over this period, that adaptive response added roughly ₹{abs(impact_rupees)} to your results compared with staying at the normal level."
             )
             
             
     return (
-            "Performance Impact\n"
-            f"Normal trades: {normal_R}R per trade\n"
-            f"After losses: {post_R}R per trade\n"
-            f"Behavioral shift: {delta_R}R per trade\n"
-            f"Estimated impact over period: ₹{impact_rupees}"
-        )
+        "Performance Impact\n"
+        f"In normal conditions, trades averaged about {normal_R}R per trade.\n"
+        f"After losses, trades averaged about {post_R}R per trade.\n"
+        f"The difference between these two modes corresponds to roughly ₹{impact_rupees} in impact over this period.\n"
+        "This captures how much your performance changes when you are trading after losses versus in neutral conditions."
+    )

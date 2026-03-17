@@ -204,8 +204,8 @@ button:active:not(:disabled) {
   font-size: 0.75rem;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: var(--soft-gray);
-  opacity: 0.8;
+  color: #ffffff;
+  opacity: 1;
   display: flex;
   align-items: center;
   justify-content: flex-end;
@@ -503,8 +503,8 @@ button:active:not(:disabled) {
 
 .session-summary-empty-copy {
   font-size: 0.9rem;
-  color: var(--soft-gray);
-  opacity: 0.9;
+  color: #ffffff;
+  opacity: 1;
 }
 
 .session-summary-header {
@@ -998,8 +998,8 @@ button:active:not(:disabled) {
 }
 
 .chat-placeholder {
-  color: var(--soft-gray);
-  opacity: 0.8;
+  color: #ffffff;
+  opacity: 1;
   font-size: 0.9rem;
   padding: 1rem 0;
 }
